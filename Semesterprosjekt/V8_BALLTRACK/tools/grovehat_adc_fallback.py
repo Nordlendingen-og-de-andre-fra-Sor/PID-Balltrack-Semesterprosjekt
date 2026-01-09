@@ -51,5 +51,4 @@ def install_grovehat_fallback():
             return max(0, min(4095, raw))
 
     # Patch inn i modulen som resten av koden importerer fra
-    import hardware.adc.ads1015 as ads1015_module
     ads1015_module.ADS1015 = ADS1015
