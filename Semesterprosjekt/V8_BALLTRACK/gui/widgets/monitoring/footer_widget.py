@@ -89,7 +89,7 @@ class FooterWidget(ttk.Frame, BaseWidget):
             self._render()
 
     # ---------------------------------------------------------
-    def update(self, **kwargs):
+    def update_status(self, **kwargs):
         """
         Oppdaterer alle verdier i statuslinjen.
 

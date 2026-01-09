@@ -126,3 +126,18 @@ class BalltrackVisualWidget(ttk.LabelFrame, BaseWidget):
             pos = self.controller.get_servo_position()
             self.set_position(pos)
 
+    # ---------------------------------------------------------
+    # Oppdatering fra status
+    # ---------------------------------------------------------
+    def update_status(self, status: dict):
+        """
+        Oppdaterer visual-widgeten basert på status fra tags/controller.
+        Kalles av app_screen sin UI-poll (20 Hz).
+        """
+        # Eksempel: hent ut verdier dere vil vise
+        pos = status.get("pos", None)
+        sp  = status.get("setpoint", None)
+        u   = status.get("u", None)
+
+        # TODO: bruk disse verdiene til å oppdatere canvas/tegning/labels
+        # f.eks. self._draw_ball(pos) osv.

@@ -104,8 +104,8 @@ class BalltrackApp:
             )
 
         # Footer: unpack dict
-        if hasattr(self.footer, "update"):
-            self.footer.update(
+        if hasattr(self.footer, "update_status"):
+            self.footer.update_status(
                 raw=status.get("raw", "---"),
                 pos=status.get("pos", "---"),
                 sp=status.get("setpoint", "---"),
@@ -117,8 +117,9 @@ class BalltrackApp:
 
         # visual_widget i din kode bruker controller.get_servo_position() direkte,
         # men vi har den via tags-adapteren.
-        if hasattr(self.visual, "update"):
-            self.visual.update(status)
+        if hasattr(self.visual, "update_status"):
+            self.visual.update_status(status)
+
 
         self.root.after(50, self._ui_poll)  # 20 Hz GUI refresh
 
