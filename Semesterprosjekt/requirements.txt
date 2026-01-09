@@ -23,12 +23,26 @@ smbus2>=0.4.3
 
 
 # ------------------------------------------------------------
+# GUI plotting (Matplotlib)
+#
+# Brukes av:
+# - gui/widgets/monitoring/plot_widget.py
+#
+# Installeres i venv (pip), ikke via apt, fordi programmet kjøres
+# fra venv og må kunne importere matplotlib der.
+# ------------------------------------------------------------
+numpy>=1.24
+matplotlib>=3.7
+
+
+# ------------------------------------------------------------
 # Optional: Grove Base HAT ADC fallback
 #
 # Brukes kun hvis dere faktisk benytter:
 #   tools/grovehat_adc_fallback.py
 #
 # IKKE påkrevd for standard Balltrack-oppsett.
-# Installeres ikke automatisk av BalltrackInstaller.
+# Hvis dere vil at installer alltid skal kunne bruke Grove,
+# la denne stå ukommentert.
 # ------------------------------------------------------------
-# grove.py
+Seeed-grove.py
