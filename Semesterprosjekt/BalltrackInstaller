@@ -2,24 +2,41 @@
 set -euo pipefail
 
 # ============================================================
-# BalltrackInstaller
+# BalltrackInstaller (V8)
 # ------------------------------------------------------------
-# ÉNGANGS installasjon:
-#  - Installerer OS-pakker (apt)
-#  - Klargjør Python-miljø
-#  - Lager desktop-ikon
+# ÉNGANGS installasjon på Raspberry Pi OS (Bookworm):
 #
-# Husk: chmod +x BalltrackInstaller
-# Kjør med: ./BalltrackInstaller
+#  A) APT (systemnivå, root):
+#     - Installerer OS-pakker som Python, Tkinter, i2c-tools
+#     - Dette påvirker hele maskinen (ikke bare prosjektet)
 #
-# Etter dette brukes KUN:
+#  B) VENV + PIP (prosjektnivå, lokalt i repo):
+#     - Lager et virtuelt Python-miljø i ./venv eller ./.venv
+#     - Installerer Python-bibliotek inn i venv (ikke system-Python)
+#     - Dette unngår "externally managed environment"
+#
+#  C) Desktop-ikon + første sjekk
+#
+# Husk:
+#   chmod +x BalltrackInstaller
+# Kjør:
+#   ./BalltrackInstaller
+#
+# Etter dette brukes normalt:
 #   ./Balltrack
 # ============================================================
 
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 APP_NAME="Balltrack"
+
 DESKTOP_DIR="$HOME/Desktop"
 DESKTOP_FILE="$DESKTOP_DIR/Balltrack.desktop"
+
+# Navn på virtuelt miljø i prosjektet (vanlig praksis: .venv)
+VENV_DIR="$PROJECT_DIR/.venv"
+
+# requirements.txt forventes å ligge i repo-root
+REQ_FILE="$PROJECT_DIR/requirements.txt"
 
 echo
 echo "======================================"
@@ -32,39 +49,110 @@ echo
 # ------------------------------------------------------------
 # 1) Sjekk OS
 # ------------------------------------------------------------
-echo "[1/6] Sjekker system..."
+echo "[1/7] Sjekker system..."
 uname -a
 echo
 
 # ------------------------------------------------------------
-# 2) Installer OS-avhengigheter
+# 2) Installer OS-avhengigheter (APT = systemnivå)
 # ------------------------------------------------------------
-echo "[2/6] Installerer systempakker (apt)"
+echo "[2/7] Installerer systempakker (APT = globalt på maskinen)"
+echo "      Dette krever sudo og påvirker hele Raspberry Pi."
 sudo apt-get update
 sudo apt-get install -y \
   python3 \
-  python3-pip \
   python3-venv \
   python3-tk \
-  python3-matplotlib \
   python3-numpy \
+  python3-matplotlib \
   i2c-tools
+
+# MERK:
+# - Vi installerer IKKE python3-pip her som en "må-ha",
+#   fordi vi bruker pip inni venv. (pip følger vanligvis med via venv)
+# - Om dere ønsker pip i system også, kan dere legge til python3-pip.
 
 echo "✓ Systempakker installert"
 echo
 
 # ------------------------------------------------------------
-# 3) Sørg for at launcher er kjørbar
+# 3) I2C-klargjøring (for ADC/PWM over I2C)
 # ------------------------------------------------------------
-echo "[3/6] Klargjør launcher"
-chmod +x "$PROJECT_DIR/Balltrack"
-echo "✓ Balltrack launcher er kjørbar"
+echo "[3/7] Klargjør I2C (best effort)"
+echo "      - modprobe i2c-dev laster kernel-modul for I2C"
+echo "      - i2cdetect brukes til å se enheter (f.eks 0x48 / 0x40)"
+sudo modprobe i2c-dev || true
+
+echo "I2C scan (bus 1):"
+i2cdetect -y 1 || true
 echo
 
 # ------------------------------------------------------------
-# 4) Desktop-ikon
+# 4) Opprett virtuelt miljø (VENV = lokalt i prosjektet)
 # ------------------------------------------------------------
-echo "[4/6] Lager desktop-ikon"
+echo "[4/7] Setter opp virtuelt Python-miljø (venv = kun for prosjektet)"
+echo "      Plassering:"
+echo "        $VENV_DIR"
+
+if [ ! -d "$VENV_DIR" ]; then
+  python3 -m venv "$VENV_DIR"
+  echo "✓ Opprettet venv"
+else
+  echo "✓ Venv finnes allerede"
+fi
+echo
+
+# Aktiver venv
+# shellcheck disable=SC1090
+source "$VENV_DIR/bin/activate"
+
+echo "Aktiv Python (skal peke på .venv):"
+python -c "import sys; print(sys.executable)"
+echo
+
+# Oppgrader pip-verktøy i venv (ikke system!)
+echo "-> Oppgraderer pip/verktøy inni venv (prosjektnivå)"
+python -m pip install --upgrade pip wheel setuptools
+echo
+
+# ------------------------------------------------------------
+# 5) Installer Python-avhengigheter i venv (PIP = prosjektnivå)
+# ------------------------------------------------------------
+echo "[5/7] Installerer Python-bibliotek (pip = KUN inni venv)"
+echo "      - Dette påvirker ikke system-Python"
+echo "      - Løser 'externally managed environment'"
+
+if [ -f "$REQ_FILE" ]; then
+  pip install -r "$REQ_FILE"
+  echo "✓ requirements.txt installert i venv"
+else
+  echo "⚠️ Fant ikke requirements.txt:"
+  echo "   $REQ_FILE"
+  echo "   Hopper over pip install."
+fi
+echo
+
+# Valgfritt: installer Grove-bibliotek kun når dere faktisk bruker Grove Base HAT ADC
+# Bruk:
+#   USE_GROVEHAT_ADC=1 ./BalltrackInstaller
+echo "-> Grove Base HAT støtte (valgfritt)"
+if [ "${USE_GROVEHAT_ADC:-0}" = "1" ]; then
+  echo "   USE_GROVEHAT_ADC=1: Installerer seeed-python-grove i venv..."
+  pip install seeed-python-grove
+  echo "✓ Grove-bibliotek installert"
+else
+  echo "   Grove install hoppet over."
+  echo "   Kjør slik hvis dere vil ha Grove-støtte:"
+  echo "     USE_GROVEHAT_ADC=1 ./BalltrackInstaller"
+fi
+echo
+
+# ------------------------------------------------------------
+# 6) Sørg for at launcher er kjørbar + desktop-ikon
+# ------------------------------------------------------------
+echo "[6/7] Klargjør launcher og desktop-ikon"
+
+chmod +x "$PROJECT_DIR/Balltrack"
 
 mkdir -p "$DESKTOP_DIR"
 
@@ -81,27 +169,30 @@ EOF
 
 chmod +x "$DESKTOP_FILE"
 
+echo "✓ Balltrack launcher er kjørbar"
 echo "✓ Desktop-ikon opprettet:"
 echo "  $DESKTOP_FILE"
 echo
 
 # ------------------------------------------------------------
-# 5) Første sjekk av miljø (uten GUI-start)
+# 7) Første sjekk av miljø (uten GUI-start)
 # ------------------------------------------------------------
-echo "[5/6] Tester miljø (venv + imports)"
+echo "[7/7] Tester miljø (venv + imports)"
+echo "      MERK: Dette forutsetter at ./Balltrack bruker .venv sin python."
 "$PROJECT_DIR/Balltrack" --check || true
 echo
 
-# ------------------------------------------------------------
-# 6) Ferdig
-# ------------------------------------------------------------
-echo "[6/6] FERDIG"
-echo
 echo "======================================"
-echo " Balltrack er installert"
+echo " FERDIG"
 echo
+echo "Balltrack er installert."
 echo "Start programmet ved å:"
 echo "  • klikke på Balltrack-ikonet på skrivebordet"
 echo "  • eller kjøre: ./Balltrack"
+echo
+echo "Tips:"
+echo "  Hvis dere vil bruke Grove Base HAT ADC:"
+echo "    export USE_GROVEHAT_ADC=1"
+echo "    ./Balltrack"
 echo "======================================"
 echo
