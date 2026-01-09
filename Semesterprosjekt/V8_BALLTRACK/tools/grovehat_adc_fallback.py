@@ -45,8 +45,6 @@ def install_grovehat_fallback():
 
             return max(0, min(4095, raw))
 
-    # ✅ Patch må skje HER (inne i funksjonen), ellers er ADS1015/ads1015_module ute av scope
-    ads1015_module.ADS1015 = ADS1015
 
     # Valgfritt, men nyttig for test
     return ADS1015
