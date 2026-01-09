@@ -1,0 +1,145 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ============================================================
+# Balltrack Launcher
+# - Sørger for at venv finnes og at pip-deps er installert
+# - Starter programmet med riktig miljø
+#
+# Bruk:
+#   ./Balltrack
+#   ./Balltrack --check
+#   ./Balltrack --repair
+# ============================================================
+
+PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$PROJECT_DIR"
+
+VENV_DIR=".venv"
+REQ_FILE="requirements.txt"
+MODULE_START="V8_BALLTRACK.main"
+
+log() { echo "[Balltrack] $*"; }
+warn() { echo "[Balltrack][WARN] $*" >&2; }
+err() { echo "[Balltrack][ERROR] $*" >&2; }
+
+need_cmd() {
+  command -v "$1" >/dev/null 2>&1 || { err "Mangler kommando: $1"; return 1; }
+}
+
+ensure_python() {
+  need_cmd python3 || {
+    err "python3 er ikke installert. Kjør BalltrackInstaller først."
+    exit 1
+  }
+}
+
+ensure_venv() {
+  if [ ! -d "$VENV_DIR" ]; then
+    log "Fant ikke $VENV_DIR -> oppretter venv"
+    python3 -m venv "$VENV_DIR"
+  fi
+
+  # shellcheck disable=SC1091
+  source "$VENV_DIR/bin/activate"
+
+  # Oppgrader pip/wheel (stille, men trygt)
+  python -m pip install --upgrade pip wheel >/dev/null 2>&1 || true
+}
+
+install_requirements() {
+  if [ ! -f "$REQ_FILE" ]; then
+    warn "Fant ikke $REQ_FILE. Hopper over pip-install."
+    return 0
+  fi
+
+  log "Installerer/oppdaterer pip-avhengigheter fra $REQ_FILE"
+  pip install -r "$REQ_FILE"
+}
+
+repair_requirements() {
+  if [ ! -f "$REQ_FILE" ]; then
+    warn "Fant ikke $REQ_FILE. Kan ikke reparere pip-avhengigheter."
+    return 0
+  fi
+
+  log "REPAIR: tvinger reinstall av pip-avhengigheter"
+  pip install --upgrade --force-reinstall -r "$REQ_FILE"
+}
+
+import_check() {
+  log "Sjekker imports..."
+  python - <<'PY'
+import importlib
+mods = ["smbus2"]
+for m in mods:
+    importlib.import_module(m)
+print("OK: pip-imports")
+PY
+
+  # Tkinter og matplotlib er OS/apt-avhengigheter. Vi sjekker, men feiler ikke hardt her.
+  python - <<'PY'
+try:
+    import tkinter
+    print("OK: tkinter")
+except Exception as e:
+    print("WARN: tkinter mangler (apt: python3-tk):", e)
+
+try:
+    import matplotlib
+    print("OK: matplotlib")
+except Exception as e:
+    print("WARN: matplotlib mangler (apt: python3-matplotlib):", e)
+PY
+}
+
+start_app() {
+  log "Starter: python -m $MODULE_START"
+  exec python -m "$MODULE_START"
+}
+
+usage() {
+  cat <<EOF
+Balltrack launcher
+
+Usage:
+  ./Balltrack           (sjekk miljø + start)
+  ./Balltrack --check   (kun sjekk, start ikke)
+  ./Balltrack --repair  (reparer pip-deps, så start)
+EOF
+}
+
+main() {
+  ensure_python
+  ensure_venv
+
+  case "${1:-}" in
+    --check)
+      install_requirements
+      import_check
+      log "CHECK ferdig. Starter ikke app (--check)."
+      exit 0
+      ;;
+    --repair)
+      repair_requirements
+      import_check
+      start_app
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    "")
+      install_requirements
+      import_check
+      start_app
+      ;;
+    *)
+      warn "Ukjent argument: $1"
+      usage
+      exit 2
+      ;;
+  esac
+}
+
+main "$@"
