@@ -138,7 +138,7 @@ echo
 echo "-> Grove Base HAT støtte (valgfritt)"
 if [ "${USE_GROVEHAT_ADC:-0}" = "1" ]; then
   echo "   USE_GROVEHAT_ADC=1: Installerer seeed-python-grove i venv..."
-  pip install Seeed-grove.py
+  pip install Seeed-python-grove.py
   echo "✓ Grove-bibliotek installert"
 else
   echo "   Grove install hoppet over."
