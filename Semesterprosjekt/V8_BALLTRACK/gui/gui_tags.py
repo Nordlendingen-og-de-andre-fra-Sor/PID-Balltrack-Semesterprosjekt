@@ -58,12 +58,18 @@ class GuiTags:
     # Servo/manual tags
     # -------------------------
     def enable_manual_servo(self, flag: bool):
+        print("[GuiTags] enable_manual_servo:", flag)
         if hasattr(self._c, "enable_manual_servo"):
             self._c.enable_manual_servo(flag)
+        else:
+            print("[GuiTags] underliggende controller mangler enable_manual_servo")
 
     def set_servo_manual(self, pos_norm: float):
+        print("[GuiTags] set_servo_manual:", pos_norm)
         if hasattr(self._c, "set_servo_manual"):
             self._c.set_servo_manual(pos_norm)
+        else:
+            print("[GuiTags] underliggende controller mangler set_servo_manual")
 
     def get_servo_position(self):
         if hasattr(self._c, "get_servo_position"):

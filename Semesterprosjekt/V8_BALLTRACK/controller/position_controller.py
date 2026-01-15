@@ -110,12 +110,15 @@ class PositionControllerV8:
     # MANUELL SERVO
     # ---------------------------------------------------------
     def enable_manual_servo(self, flag):
+        print("[PC] enable_manual_servo:", flag)
         self._manual_mode = flag
         if flag:
             self._enabled = False
 
     def set_servo_manual(self, pos_norm):
+        print("[PC] set_servo_manual called. manual_mode=", self._manual_mode, "pos_norm=", pos_norm)
         if not self._manual_mode:
+            print("[PC] Ignored because manual_mode is False")
             return
 
         # robust clamp av input

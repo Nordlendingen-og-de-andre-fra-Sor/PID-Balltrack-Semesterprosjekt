@@ -1,6 +1,9 @@
 """
 servo_widget.py
 ---------------------------------------
+
+Midlertidig endring på linje 142 for å deaktivere slider helt (tkinter bug?)
+
 Widget for visning og manuell styring av servoens posisjon.
 
 Tilpasset PositionController (V5/V7/V8) med API:
@@ -136,11 +139,17 @@ class ServoWidget(ttk.LabelFrame, BaseWidget):
     # Intern: UI-state ved manual ON/OFF
     # ---------------------------------------------------------
     def _apply_manual_ui_state(self, is_manual: bool):
+        self.slider.configure(state=("normal" if is_manual else "disabled"))
+
+        #
+        # Midlertidig endring for å deaktivere slider helt (tkinter bug?)
+        #
+        """
         if is_manual:
             self.slider.state(["!disabled"])
         else:
             self.slider.state(["disabled"])
-
+        """
     # ---------------------------------------------------------
     # Manual toggle
     # ---------------------------------------------------------
