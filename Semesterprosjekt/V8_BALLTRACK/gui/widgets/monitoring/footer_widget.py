@@ -105,5 +105,6 @@ class FooterWidget(ttk.Frame, BaseWidget):
     # ---------------------------------------------------------
     def bind(self, controller):
         """Forberedt for senere bruk hvis footer skal hente noe direkte fra controller."""
-        super().bind(controller)
+        BaseWidget.bind(self, controller)
+
 

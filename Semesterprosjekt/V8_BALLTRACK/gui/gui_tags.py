@@ -84,3 +84,8 @@ class GuiTags:
         if hasattr(self._c, "get_status"):
             return self._c.get_status()
         return {}
+    
+    def update(self, dt: float):
+        if hasattr(self._c, "update"):
+            return self._c.update(dt)
+

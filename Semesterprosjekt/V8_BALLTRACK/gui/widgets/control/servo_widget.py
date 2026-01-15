@@ -87,7 +87,8 @@ class ServoWidget(ttk.LabelFrame, BaseWidget):
     # Binding
     # ---------------------------------------------------------
     def bind(self, controller):
-        super().bind(controller)
+        BaseWidget.bind(self, controller)
+
 
         # Start alltid i AUTO ved bind (forutsigbar faceplate)
         self.var_manual.set(False)

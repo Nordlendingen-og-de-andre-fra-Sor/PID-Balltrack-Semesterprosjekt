@@ -99,7 +99,8 @@ class SetpointWidget(ttk.LabelFrame, BaseWidget):
     # Controller → widget
     # ---------------------------------------------------------
     def bind(self, controller):
-        super().bind(controller)
+        BaseWidget.bind(self, controller)
+
 
         if hasattr(self.controller, "get_setpoint"):
             sp_float = float(self.controller.get_setpoint())

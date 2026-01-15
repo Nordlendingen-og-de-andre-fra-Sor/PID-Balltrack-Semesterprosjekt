@@ -107,7 +107,8 @@ class PIDWidget(ttk.LabelFrame, BaseWidget):
     # BINDING
     # ---------------------------------------------------------
     def bind(self, controller):
-        super().bind(controller)
+        BaseWidget.bind(self, controller)
+
         self._reset()
 
     # ---------------------------------------------------------

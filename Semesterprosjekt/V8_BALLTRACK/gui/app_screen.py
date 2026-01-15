@@ -1,5 +1,6 @@
 # app_screen.py
 import tkinter as tk
+import time
 
 from V8_BALLTRACK.gui.widgets.control.setpoint_widget import SetpointWidget
 from V8_BALLTRACK.gui.widgets.control.control_widget import ControlWidget
@@ -26,11 +27,15 @@ class BalltrackApp:
         self.root = root
         self.tags = tags
 
+        self._last_t = time.monotonic()
+
+
         self._configure_root()
         self._build_layout()
         self._bind_widgets()
 
-        # kun HMI refresh (ikke kjøre regulering her)
+        # UI refresh + cyclic controller update
+
         self._ui_poll()
 
     def _configure_root(self):
@@ -88,6 +93,17 @@ class BalltrackApp:
 
 
     def _ui_poll(self):
+        # NYTT: cyclic update av controller via tags
+        now = time.monotonic()
+        dt = now - self._last_t
+        self._last_t = now
+
+        # clamp dt for stabil oppførsel
+        dt = max(0.0, min(0.2, dt))
+
+        if hasattr(self.tags, "update"):
+            self.tags.update(dt)
+
         status = {}
         if hasattr(self.tags, "get_status"):
             status = self.tags.get_status() or {}
@@ -114,12 +130,8 @@ class BalltrackApp:
                 mode=status.get("mode", "---"),
             )
 
-
-        # visual_widget i din kode bruker controller.get_servo_position() direkte,
-        # men vi har den via tags-adapteren.
         if hasattr(self.visual, "update_status"):
             self.visual.update_status(status)
-
 
         self.root.after(50, self._ui_poll)  # 20 Hz GUI refresh
 

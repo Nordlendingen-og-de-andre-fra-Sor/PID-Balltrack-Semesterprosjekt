@@ -120,7 +120,8 @@ class BalltrackVisualWidget(ttk.LabelFrame, BaseWidget):
     # Bind controller → widget
     # ---------------------------------------------------------
     def bind(self, controller):
-        super().bind(controller)
+        BaseWidget.bind(self, controller)
+
 
         if hasattr(self.controller, "get_servo_position"):
             pos = self.controller.get_servo_position()

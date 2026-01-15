@@ -85,7 +85,8 @@ class ControlWidget(ttk.LabelFrame, BaseWidget):
     # ---------------------------------------------------------
     def bind(self, controller):
         """Knytter widgeten til controller."""
-        super().bind(controller)
+        BaseWidget.bind(self, controller)
+
 
     # ---------------------------------------------------------
     def _start(self):
