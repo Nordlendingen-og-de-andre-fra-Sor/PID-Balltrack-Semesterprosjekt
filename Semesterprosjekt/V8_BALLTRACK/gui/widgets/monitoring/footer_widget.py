@@ -94,7 +94,7 @@ class FooterWidget(ttk.Frame, BaseWidget):
         Oppdaterer alle verdier i statuslinjen.
 
         Eksempel:
-            footer.update(raw=770, pos=0.18, sp=0.21, u=0.11, servo_us=1550, mode="SIM")
+            footer.update_status(raw=770, pos=0.18, sp=0.21, u=0.11, servo_us=1550, mode="SIM")
         """
         for key, value in kwargs.items():
             if key in self.fields and key in self.labels:

@@ -2,14 +2,12 @@ V8_BALLTRACK/
     __init__.py
     .gitignore
     main.py
-    sitecustomize.py
     structure.txt
     config/
         __init__.py
         settings.py
     controller/
         __init__.py
-        dummy_controller.py
         pid.py
         position_controller.py
     hardware/
@@ -51,6 +49,4 @@ V8_BALLTRACK/
         test_pid.py
         test_position_controller.py
         test_gui.py
-    tools/
-        grovehat_adc_fallback.py
     README.md

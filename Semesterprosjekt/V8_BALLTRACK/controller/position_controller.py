@@ -40,6 +40,7 @@ class PositionControllerV8:
     # ---------------------------------------------------------
     def read_position(self) -> float:
         raw = self.adc.read_raw(settings.ADC_CHANNEL)
+        raw = max(0, raw)
         self.last_raw = raw
 
         pos = raw / settings.ADC_RESOLUTION
@@ -163,6 +164,12 @@ class PositionControllerV8:
     # Status for GUI
     # ---------------------------------------------------------
     def get_status(self):
+        # Oppdater alltid raw/pos for GUI (uten å kjøre servo)
+        try:
+            self.read_position()
+        except Exception:
+            pass
+
         return {
             "raw": self.last_raw,
             "pos": self.last_pos,
@@ -174,6 +181,7 @@ class PositionControllerV8:
             "D": self.pid.last_D,
             "mode": self.mode,
         }
+
 
     def get_servo_position(self) -> float:
         # map last_pulse_us -> 0..1

@@ -19,13 +19,13 @@ SERVO_CHANNEL = 0              # PCA9685 utgang vi bruker
 
 
 # ===========================
-# HARDWARE – ADC (ADS1015)
+# HARDWARE – ADC (ADS1115)
 # ===========================
-# ADC (ADS1015)
+# ADC (ADS1115)
 ADC_I2C_BUS = 1
-ADC_I2C_ADDR = 0x48      # ADS1015 standardadresse (kan være 0x48–0x4B)
+ADC_I2C_ADDR = 0x48      # ADS1115 standardadresse (kan være 0x48–0x4B)
 ADC_CHANNEL = 0          # 0..3 (AIN0..AIN3) single-ended
-ADC_RESOLUTION = 4095    # 12-bit
+ADC_RESOLUTION = 32767    # 16-bit single-ended positiv range
 
 
 

@@ -59,19 +59,17 @@ class GuiTags:
     # -------------------------
     def enable_manual_servo(self, flag: bool):
         if hasattr(self._c, "enable_manual_servo"):
-            return self._c.enable_manual_servo(flag)
+            self._c.enable_manual_servo(flag)
 
-    def set_servo_manual(self, value):
+    def set_servo_manual(self, pos_norm: float):
         if hasattr(self._c, "set_servo_manual"):
-            return self._c.set_servo_manual(value)
+            self._c.set_servo_manual(pos_norm)
 
     def get_servo_position(self):
         if hasattr(self._c, "get_servo_position"):
             return self._c.get_servo_position()
-        # fallback: hvis controller har pos
-        if hasattr(self._c, "pos"):
-            return self._c.pos
-        return 0.0
+        return 0.5
+
 
     # -------------------------
     # Status (for skjerm/plot)

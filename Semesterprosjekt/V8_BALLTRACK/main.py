@@ -7,7 +7,7 @@ from V8_BALLTRACK.config import settings
 from V8_BALLTRACK.controller.position_controller import PositionControllerV8
 from V8_BALLTRACK.controller.dummy_controller import DummyController
 
-from V8_BALLTRACK.hardware.adc.ads1015 import ADS1015
+from V8_BALLTRACK.hardware.adc.ads1115 import ADS1115
 from V8_BALLTRACK.hardware.pwm.pca9685 import PCA9685
 
 from V8_BALLTRACK.gui.gui_tags import GuiTags
@@ -22,7 +22,7 @@ def create_controller():
 
     try:
         # Test ADC
-        adc = ADS1015(
+        adc = ADS1115(
             bus=settings.ADC_I2C_BUS,
             address=settings.ADC_I2C_ADDR,
             default_channel=settings.ADC_CHANNEL,
@@ -44,7 +44,7 @@ def create_controller():
     except Exception as e:
         print("⚠️ Hardware IKKE funnet – bytter til DummyController")
         print("Feilmelding:", e)
-        ctrl = DummyController()
+        ctrl = DummyController(adc_resolution=settings.ADC_RESOLUTION)
         ctrl.mode = "DUMMY"
         return ctrl
 
