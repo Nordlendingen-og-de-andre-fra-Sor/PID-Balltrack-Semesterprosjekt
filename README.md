@@ -38,25 +38,25 @@ Utfyllende dokumentasjon finnes i mappen "Dokumentasjon" og dekker blant annet:
 For praktisk overlevering, se HANDOVER.md.
 
 # Quick start
-Update system
+Update system:
 sudo apt update && sudo apt upgrade -y
 
-Install prerequisites
+Install prerequisites:
 sudo apt install -y git bash
 
-Clone repository
+Clone repository:
 git clone https://github.com/Nordlendingen-og-de-andre-fra-Sor/PID-Balltrack-Semesterprosjekt
 
-Enter project directory
+Enter project directory:
 cd PID-Balltrack-Semesterprosjekt/Semesterprosjekt
 
-Make installer executable
+Make installer executable:
 chmod +x Balltrackinstaller
 
-Run installer
+Run installer:
 bash Balltrackinstaller
 
-Start application
+Start application:
 ./Balltrack
 
 Etterpå kan man forvente:
