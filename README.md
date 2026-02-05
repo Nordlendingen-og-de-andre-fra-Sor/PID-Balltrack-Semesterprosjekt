@@ -51,10 +51,10 @@ Enter project directory:
 cd PID-Balltrack-Semesterprosjekt/Semesterprosjekt
 
 Make installer executable:
-chmod +x Balltrackinstaller
+chmod +x BalltrackInstaller
 
 Run installer:
-bash Balltrackinstaller
+bash BalltrackInstaller
 
 Start application:
 ./Balltrack
