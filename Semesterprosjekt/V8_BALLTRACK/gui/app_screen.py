@@ -67,14 +67,16 @@ class BalltrackApp:
         self.pid = PIDWidget(left)
         self.pid.pack(fill="x", pady=6)
 
+        self.visual = BalltrackVisualWidget(center)
+        self.visual.pack(fill="both", expand=True)
+
         self.control = ControlWidget(left)
         self.control.pack(fill="x", pady=6)
 
         self.servo = ServoWidget(left)
         self.servo.pack(fill="x", pady=6)
 
-        self.visual = BalltrackVisualWidget(center)
-        self.visual.pack(fill="both", expand=True)
+
 
         self.plot = PlotWidget(right)
         self.plot.pack(fill="both", expand=True)
