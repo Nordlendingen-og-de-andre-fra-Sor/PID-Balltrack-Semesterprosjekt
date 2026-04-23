@@ -30,20 +30,9 @@ class BalltrackVisualWidget(ttk.LabelFrame, BaseWidget):
         self.ball_radius = 10
         self._last_pos = 0.5
 
-        self.var_pos = tk.StringVar(value="Posisjon: 0.500")
-        self.var_raw = tk.StringVar(value="RAW: ---")
-        self.var_sp = tk.StringVar(value="SP: 0.500")
-
         self._build_ui()
 
     def _build_ui(self):
-        info_frame = ttk.Frame(self)
-        info_frame.pack(fill="x", padx=10, pady=(8, 0))
-
-        ttk.Label(info_frame, textvariable=self.var_pos).pack(side="left", padx=(0, 15))
-        ttk.Label(info_frame, textvariable=self.var_raw).pack(side="left", padx=(0, 15))
-        ttk.Label(info_frame, textvariable=self.var_sp).pack(side="left")
-
         self.canvas = tk.Canvas(
             self,
             height=self.canvas_height,
@@ -112,7 +101,7 @@ class BalltrackVisualWidget(ttk.LabelFrame, BaseWidget):
             status = self.controller.get_status()
             self.update_status(status)
 
-            
+
     def update_status(self, status: dict):
         pos = status.get("pos", None)
 
