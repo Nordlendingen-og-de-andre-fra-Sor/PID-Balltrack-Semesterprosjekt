@@ -52,6 +52,7 @@ Etter writing av SD-kort er fullført så legger man inn kortet inn i mikrokontr
 
 Følg instrukser under oppstart etter boot er i gang.
 Deretter åpne terminal (svart ikon) og følg instrukser under.
+
 Update system:
 sudo apt update && sudo apt upgrade -y
 
