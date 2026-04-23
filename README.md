@@ -37,6 +37,8 @@ Utfyllende dokumentasjon finnes i mappen "Dokumentasjon" og dekker blant annet:
 
 For praktisk overlevering, se HANDOVER.md.
 
+
+
 # Quick start
 
 Dette prosjektet bruker en Raspberry Pi 5 med microSD-kort som oppstartsdisk. Kortet inneholder operativsystemet og er nødvendig for at systemet skal fungere.
@@ -119,9 +121,5 @@ Etterpå kan man forvente:
 Hardware connected    -> Full tracking + PID control
 No hardware detected  -> DummyController (simulation)
 
-# For senere bruk husk:
-cd ~/PID-Balltrack-Semesterprosjekt/Semesterprosjekt
-./Balltrack
-+ Update repository
-git pull
+
 
