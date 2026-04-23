@@ -66,6 +66,7 @@ class BalltrackApp:
         mid.columnconfigure(1, weight=1)
         mid.rowconfigure(0, weight=1)
 
+
         # ---- VENSTRE (kontrollpanel) ----
         left = tk.Frame(mid, width=250)
         left.grid(row=0, column=0, sticky="ns", padx=8, pady=6)
