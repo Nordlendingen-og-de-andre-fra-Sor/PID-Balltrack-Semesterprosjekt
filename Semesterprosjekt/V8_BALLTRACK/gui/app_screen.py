@@ -47,46 +47,55 @@ class BalltrackApp:
         main = tk.Frame(self.root)
         main.pack(fill="both", expand=True)
 
-        # TOPP
+        # -------------------------------------------------
+        # TOPP: Setpoint + Visual (full bredde)
+        # -------------------------------------------------
         self.setpoint = SetpointWidget(main)
         self.setpoint.pack(fill="x", padx=8, pady=6)
 
         self.visual = BalltrackVisualWidget(main)
-        self.visual.pack(fill="both", expand=True)
+        self.visual.pack(fill="x", padx=8, pady=6)   # viktig: ikke expand
 
-        # MIDT
+        # -------------------------------------------------
+        # MIDT: 2-kolonne layout (venstre + senter)
+        # -------------------------------------------------
         mid = tk.Frame(main)
         mid.pack(fill="both", expand=True)
 
+        # Grid gir kontroll på bredde
+        mid.columnconfigure(0, weight=0, minsize=280)  # venstre fast bredde
+        mid.columnconfigure(1, weight=1)               # senter fleksibel
+        mid.rowconfigure(0, weight=1)
+
+        # ---- VENSTRE (kontrollpanel) ----
         left = tk.Frame(mid)
-        left.pack(side="left", fill="y", padx=8, pady=6)
+        left.grid(row=0, column=0, sticky="ns", padx=8, pady=6)
 
-        center = tk.Frame(mid)
-        center.pack(side="left", fill="both", expand=True, padx=8, pady=6)
-
-        right = tk.Frame(mid)
-        right.pack(side="right", fill="both", padx=8, pady=6)
+        left.columnconfigure(0, weight=1)
+        left.rowconfigure(3, weight=1)  # log vokser
 
         self.pid = PIDWidget(left)
-        self.pid.pack(fill="x", pady=6)
-
-
+        self.pid.grid(row=0, column=0, sticky="ew", pady=6)
 
         self.control = ControlWidget(left)
-        self.control.pack(fill="x", pady=6)
+        self.control.grid(row=1, column=0, sticky="ew", pady=6)
 
         self.servo = ServoWidget(left)
-        self.servo.pack(fill="x", pady=6)
+        self.servo.grid(row=2, column=0, sticky="ew", pady=6)
 
         self.log = LogWidget(left)
-        self.log.pack(fill="both", expand=True, pady=6)
+        self.log.grid(row=3, column=0, sticky="nsew", pady=6)
+
+        # ---- SENTER (visualisering / plot) ----
+        center = tk.Frame(mid)
+        center.grid(row=0, column=1, sticky="nsew", padx=8, pady=6)
 
         self.plot = PlotWidget(center)
         self.plot.pack(fill="both", expand=True)
 
-
-
+        # -------------------------------------------------
         # FOOTER
+        # -------------------------------------------------
         self.footer = FooterWidget(main)
         self.footer.pack(fill="x", padx=8, pady=6)
 
