@@ -62,7 +62,7 @@ class BalltrackApp:
         mid = tk.Frame(main)
         mid.pack(fill="both", expand=True)
 
-        mid.columnconfigure(0, weight=0, minsize=250)
+        mid.columnconfigure(0, weight=0, minsize=300)
         mid.columnconfigure(1, weight=1)
         mid.rowconfigure(0, weight=1)
 
