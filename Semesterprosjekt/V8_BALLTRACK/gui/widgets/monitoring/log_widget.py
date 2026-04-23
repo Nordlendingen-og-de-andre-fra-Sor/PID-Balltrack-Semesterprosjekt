@@ -89,6 +89,9 @@ class LogWidget(ttk.LabelFrame, BaseWidget):
         ttk.Button(self, text="Lagre", command=self.save_log).grid(
             row=1, column=1, sticky="ew", padx=2, pady=3
         )
+        ttk.Button(self, text="⤢", command=self.expand).grid(
+            row=1, column=2, sticky="ew", padx=2, pady=3
+        )
 
         # Stretch i grid
         self.rowconfigure(0, weight=1)
@@ -153,3 +156,31 @@ class LogWidget(ttk.LabelFrame, BaseWidget):
 
         except Exception as e:
             print(f"[LogWidget] FEIL ved lagring: {e}")
+
+    def expand(self):
+        """Åpner logg i eget vindu (fullscreen-visning)."""
+
+        win = tk.Toplevel(self)
+        win.title("Logg – Utvidet visning")
+        win.geometry("800x600")
+
+        # Ny tekst-widget
+        text = tk.Text(
+            win,
+            wrap="word",
+            bg="#1e1e1e",
+            fg="#d0d0d0",
+            insertbackground="white",
+        )
+        text.pack(fill="both", expand=True)
+
+        # Scrollbar
+        scrollbar = ttk.Scrollbar(win, orient="vertical", command=text.yview)
+        text.configure(yscrollcommand=scrollbar.set)
+        scrollbar.pack(side="right", fill="y")
+
+        # Kopier innhold fra original logg
+        content = self.text.get("1.0", "end")
+        text.insert("1.0", content)
+
+        text.configure(state="disabled")
