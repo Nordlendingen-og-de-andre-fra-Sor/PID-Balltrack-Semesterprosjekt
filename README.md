@@ -38,6 +38,20 @@ Utfyllende dokumentasjon finnes i mappen "Dokumentasjon" og dekker blant annet:
 For praktisk overlevering, se HANDOVER.md.
 
 # Quick start
+Dette prosjektet tar i bruk en Raspberry Pi 5 og den bruker en microSD som "oppstartsdisk". Den inneholder operativsystemet og er nødvendig for generell funksjon.'
+
+For å sette opp ny OS må man laste ned en Raspberry Pi Imager. Nettside: https://www.raspberrypi.com/software/ 
+Her setter man preferanser for OS innstillinger.
+Device - Velger din type Raspberry Pi
+OS - Velger operativ system, her velger man Raspberry Pi 5.
+Storage - Velg ditt SD-kort.
+Videre er det opp til bruker om man ønsker å ta i bruk "customisation". Dette er ikke nødvendig for dette prosjektet.
+Write - Når du har valgt Device, OS og Storage så er det bare å trykke "Write".
+
+Etter writing av SD-kort er fullført så legger man inn kortet inn i mikrokontrolleren og booter opp.
+
+Følg instrukser under oppstart etter boot er i gang.
+Deretter åpne terminal (svart ikon) og følg instrukser under.
 Update system:
 sudo apt update && sudo apt upgrade -y
 
@@ -68,10 +82,4 @@ cd ~/PID-Balltrack-Semesterprosjekt/Semesterprosjekt
 ./Balltrack
 + Update repository
 git pull
-
-
-
-
-
-
 
