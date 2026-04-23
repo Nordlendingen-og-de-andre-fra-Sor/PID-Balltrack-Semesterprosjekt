@@ -54,7 +54,7 @@ class BalltrackApp:
         self.setpoint.pack(fill="x", padx=8, pady=6)
 
         self.visual = BalltrackVisualWidget(main)
-        self.visual.pack(fill="x", padx=8, pady=6)   # viktig: ikke expand
+        self.visual.pack(fill="x", padx=8, pady=6)
 
         # -------------------------------------------------
         # MIDT: 2-kolonne layout (venstre + senter)
@@ -62,17 +62,17 @@ class BalltrackApp:
         mid = tk.Frame(main)
         mid.pack(fill="both", expand=True)
 
-        # Grid gir kontroll på bredde
-        mid.columnconfigure(0, weight=0, minsize=150)  # venstre fast bredde
-        mid.columnconfigure(1, weight=1)               # senter fleksibel
+        mid.columnconfigure(0, weight=0, minsize=250)
+        mid.columnconfigure(1, weight=1)
         mid.rowconfigure(0, weight=1)
 
         # ---- VENSTRE (kontrollpanel) ----
-        left = tk.Frame(mid)
+        left = tk.Frame(mid, width=250)
         left.grid(row=0, column=0, sticky="ns", padx=8, pady=6)
+        left.grid_propagate(False)
 
         left.columnconfigure(0, weight=1)
-        left.rowconfigure(3, weight=1)  # log vokser
+        left.rowconfigure(3, weight=1)
 
         self.pid = PIDWidget(left)
         self.pid.grid(row=0, column=0, sticky="ew", pady=6)

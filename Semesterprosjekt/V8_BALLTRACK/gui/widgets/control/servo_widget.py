@@ -77,7 +77,7 @@ class ServoWidget(ttk.LabelFrame, BaseWidget):
             to=100,
             orient="horizontal",
             command=self._slider_moved,
-            length=300,
+            length=180,
         )
         self.slider.grid(row=2, column=0, columnspan=2, sticky="ew", pady=6)
 
