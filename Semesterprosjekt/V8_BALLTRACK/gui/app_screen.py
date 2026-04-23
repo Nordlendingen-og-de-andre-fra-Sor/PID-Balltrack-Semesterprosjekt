@@ -78,13 +78,13 @@ class BalltrackApp:
         self.servo = ServoWidget(left)
         self.servo.pack(fill="x", pady=6)
 
+        self.log = LogWidget(left)
+        self.log.pack(fill="both", expand=True, pady=6)
 
-
-        self.plot = PlotWidget(right)
+        self.plot = PlotWidget(center)
         self.plot.pack(fill="both", expand=True)
 
-        self.log = LogWidget(right)
-        self.log.pack(fill="both", expand=True, pady=6)
+
 
         # FOOTER
         self.footer = FooterWidget(main)
