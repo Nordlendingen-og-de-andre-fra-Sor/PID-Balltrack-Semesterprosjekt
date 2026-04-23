@@ -38,41 +38,82 @@ Utfyllende dokumentasjon finnes i mappen "Dokumentasjon" og dekker blant annet:
 For praktisk overlevering, se HANDOVER.md.
 
 # Quick start
-Dette prosjektet tar i bruk en Raspberry Pi 5 og den bruker en microSD som "oppstartsdisk". Den inneholder operativsystemet og er nødvendig for generell funksjon.'
 
-For å sette opp ny OS må man laste ned en Raspberry Pi Imager. Nettside: https://www.raspberrypi.com/software/ 
-Her setter man preferanser for OS innstillinger.
-Device - Velger din type Raspberry Pi
-OS - Velger operativ system, her velger man Raspberry Pi 5.
-Storage - Velg ditt SD-kort.
-Videre er det opp til bruker om man ønsker å ta i bruk "customisation". Dette er ikke nødvendig for dette prosjektet.
-Write - Når du har valgt Device, OS og Storage så er det bare å trykke "Write".
+Dette prosjektet bruker en Raspberry Pi 5 med microSD-kort som oppstartsdisk. Kortet inneholder operativsystemet og er nødvendig for at systemet skal fungere.
 
-Etter writing av SD-kort er fullført så legger man inn kortet inn i mikrokontrolleren og booter opp.
 
-Følg instrukser under oppstart etter boot er i gang.
-Deretter åpne terminal (svart ikon) og følg instrukser under.
+## Installere Raspberry Pi OS
 
-Update system:
+1. Last ned og åpne **Raspberry Pi Imager**  
+   https://www.raspberrypi.com/software/
+
+2. Velg følgende:
+   - **Device** → Raspberry Pi 5  
+   - **OS** → Raspberry Pi OS (64-bit)  
+   - **Storage** → ditt SD-kort  
+
+3. (Valgfritt) Customisation kan brukes, men er ikke nødvendig for dette prosjektet.
+
+4. Trykk **Write** og vent til prosessen er ferdig.
+
+5. Sett SD-kortet inn i Raspberry Pi og start den.
+
+6. Følg standard oppstartsprosess.
+
+---
+
+## Oppsett av prosjekt
+
+Åpne terminal og kjør:
+
+```bash
+# Update system
 sudo apt update && sudo apt upgrade -y
 
-Install prerequisites:
+# Install prerequisites
 sudo apt install -y git bash
 
-Clone repository:
+# Clone repository
 git clone https://github.com/Nordlendingen-og-de-andre-fra-Sor/PID-Balltrack-Semesterprosjekt
 
-Enter project directory:
+# Enter project directory
 cd PID-Balltrack-Semesterprosjekt/Semesterprosjekt
 
-Make installer executable:
+# Make installer executable
 chmod +x BalltrackInstaller
 
-Run installer:
+# Run installer
 bash BalltrackInstaller
 
-Start application:
+# Start application
 ./Balltrack
+```
+
+---
+
+## Forventet oppførsel
+
+```text
+Hardware connected    -> Full tracking + PID control
+No hardware detected  -> DummyController (simulation)
+```
+
+---
+
+## Senere oppstart
+
+```bash
+cd ~/PID-Balltrack-Semesterprosjekt/Semesterprosjekt
+./Balltrack
+```
+
+---
+
+## Notater
+
+- Ingen manuell konfigurasjon er nødvendig  
+- Alle avhengigheter installeres automatisk  
+- Systemet fungerer uten hardware (simulering)  
 
 Etterpå kan man forvente:
 Hardware connected    -> Full tracking + PID control
