@@ -63,7 +63,7 @@ class BalltrackApp:
         mid.pack(fill="both", expand=True)
 
         # Grid gir kontroll på bredde
-        mid.columnconfigure(0, weight=0, minsize=280)  # venstre fast bredde
+        mid.columnconfigure(0, weight=0, minsize=150)  # venstre fast bredde
         mid.columnconfigure(1, weight=1)               # senter fleksibel
         mid.rowconfigure(0, weight=1)
 
