@@ -51,6 +51,9 @@ class BalltrackApp:
         self.setpoint = SetpointWidget(main)
         self.setpoint.pack(fill="x", padx=8, pady=6)
 
+        self.visual = BalltrackVisualWidget(main)
+        self.visual.pack(fill="both", expand=True)
+
         # MIDT
         mid = tk.Frame(main)
         mid.pack(fill="both", expand=True)
@@ -67,8 +70,7 @@ class BalltrackApp:
         self.pid = PIDWidget(left)
         self.pid.pack(fill="x", pady=6)
 
-        self.visual = BalltrackVisualWidget(center)
-        self.visual.pack(fill="both", expand=True)
+
 
         self.control = ControlWidget(left)
         self.control.pack(fill="x", pady=6)
