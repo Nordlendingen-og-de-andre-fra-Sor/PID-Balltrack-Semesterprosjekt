@@ -40,10 +40,16 @@ class PositionControllerV8:
     # ---------------------------------------------------------
     def read_position(self) -> float:
         raw = self.adc.read_raw(settings.ADC_CHANNEL)
-        raw = max(0, raw)
         self.last_raw = raw
 
-        pos = raw / settings.ADC_RESOLUTION
+        raw_min = settings.SOFTPOT_RAW_MIN
+        raw_max = settings.SOFTPOT_RAW_MAX
+
+        if raw_max <= raw_min:
+            pos = 0.0
+        else:
+            pos = (raw - raw_min) / (raw_max - raw_min)
+
         pos = max(0.0, min(1.0, pos))
         self.last_pos = pos
         return pos

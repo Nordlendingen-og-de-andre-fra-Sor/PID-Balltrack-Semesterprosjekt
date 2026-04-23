@@ -112,22 +112,16 @@ class BalltrackVisualWidget(ttk.LabelFrame, BaseWidget):
             status = self.controller.get_status()
             self.update_status(status)
 
+            
     def update_status(self, status: dict):
-        pos = status.get("pos", 0.5)
-        raw = status.get("raw", "---")
-        sp = status.get("setpoint", "---")
+        pos = status.get("pos", None)
+
+        if pos is None:
+            return
 
         try:
             pos = float(pos)
         except Exception:
-            pos = 0.5
+            return
 
         self.set_position(pos)
-
-        self.var_pos.set(f"Posisjon: {pos:.3f}")
-        self.var_raw.set(f"RAW: {raw}")
-
-        if isinstance(sp, (int, float)):
-            self.var_sp.set(f"SP: {sp:.3f}")
-        else:
-            self.var_sp.set(f"SP: {sp}")

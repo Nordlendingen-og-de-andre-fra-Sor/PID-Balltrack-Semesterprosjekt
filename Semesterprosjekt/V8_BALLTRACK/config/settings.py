@@ -28,7 +28,8 @@ ADC_CHANNEL = 0          # 0..3 (AIN0..AIN3) single-ended
 ADC_RESOLUTION = 32767    # 16-bit single-ended positiv range
 
 
-
+SOFTPOT_RAW_MIN = 1130
+SOFTPOT_RAW_MAX = 24900
 # ===========================
 # PID – standardverdier
 # ===========================
