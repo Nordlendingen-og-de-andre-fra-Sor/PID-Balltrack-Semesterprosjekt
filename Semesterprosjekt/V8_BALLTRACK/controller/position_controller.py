@@ -13,9 +13,15 @@ class PositionControllerV8:
         # PID-konfig
         cfg = PIDConfig(
             pid_type=PIDType.PARALLEL,
+
             Kp=settings.PID_KP,
             Ki=settings.PID_KI,
             Kd=settings.PID_KD,
+
+            K=settings.PID_K,
+            Ti=settings.PID_TI,
+            Td=settings.PID_TD,
+
             umin=settings.PID_MIN,
             umax=settings.PID_MAX,
         )
@@ -97,6 +103,15 @@ class PositionControllerV8:
         self._enabled = False
         self.servo_off()
 
+    def get_pid_type(self):
+        return self.pid.cfg.pid_type
+
+    def set_pid_type(self, pid_type):
+        if isinstance(pid_type, str):
+            pid_type = PIDType(pid_type)
+
+        self.pid.cfg.pid_type = pid_type
+        self.pid.reset()
     # ---------------------------------------------------------
     # Servo av
     # ---------------------------------------------------------
@@ -162,20 +177,42 @@ class PositionControllerV8:
         self.pid.reset()
 
     def disable_integral(self, flag: bool):
-        if flag:
-            self._stored_Ki = self.pid.cfg.Ki
-            self.pid.cfg.Ki = 0.0
-        else:
-            if hasattr(self, "_stored_Ki"):
-                self.pid.cfg.Ki = self._stored_Ki
+        cfg = self.pid.cfg
+
+        if cfg.pid_type == PIDType.PARALLEL:
+            if flag:
+                self._stored_Ki = cfg.Ki
+                cfg.Ki = 0.0
+            else:
+                if hasattr(self, "_stored_Ki"):
+                    cfg.Ki = self._stored_Ki
+
+        else:  # IDEAL / SERIES
+            if flag:
+                self._stored_Ti = cfg.Ti
+                cfg.Ti = settings.PID_TI_DISABLED
+            else:
+                if hasattr(self, "_stored_Ti"):
+                    cfg.Ti = self._stored_Ti
 
     def disable_derivative(self, flag: bool):
-        if flag:
-            self._stored_Kd = self.pid.cfg.Kd
-            self.pid.cfg.Kd = 0.0
-        else:
-            if hasattr(self, "_stored_Kd"):
-                self.pid.cfg.Kd = self._stored_Kd
+        cfg = self.pid.cfg
+
+        if cfg.pid_type == PIDType.PARALLEL:
+            if flag:
+                self._stored_Kd = cfg.Kd
+                cfg.Kd = 0.0
+            else:
+                if hasattr(self, "_stored_Kd"):
+                    cfg.Kd = self._stored_Kd
+
+        else:  # IDEAL / SERIES
+            if flag:
+                self._stored_Td = cfg.Td
+                cfg.Td = settings.PID_TD_DISABLED
+            else:
+                if hasattr(self, "_stored_Td"):
+                    cfg.Td = self._stored_Td
 
     # ---------------------------------------------------------
     # Status for GUI

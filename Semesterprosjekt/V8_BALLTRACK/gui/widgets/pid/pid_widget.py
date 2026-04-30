@@ -17,6 +17,7 @@ Modusvelger (PID/PI/PD/P) er beholdt for pedagogikk, men brukes til
 import tkinter as tk
 from tkinter import ttk
 from V8_BALLTRACK.gui.widgets.base_widget import BaseWidget
+from V8_BALLTRACK.controller.pid import PIDType
 
 from V8_BALLTRACK.gui.widgets.registry import register_widget
 
@@ -39,6 +40,8 @@ class PIDWidget(ttk.LabelFrame, BaseWidget):
         ttk.LabelFrame.__init__(self, parent, text="PID-innstillinger")
         BaseWidget.__init__(self)
 
+        self.var_pid_type = tk.StringVar(value=PIDType.PARALLEL.value)
+
         # Variabler for GUI-input
         self.var_kp = tk.StringVar()
         self.var_ki = tk.StringVar()
@@ -55,23 +58,34 @@ class PIDWidget(ttk.LabelFrame, BaseWidget):
 
         self.columnconfigure(1, weight=1)
 
+        # --- PID FORM (øverst) ---
+        ttk.Label(self, text="PID-form:").grid(row=0, column=0, sticky="w")
+        self.combo_pid_type = ttk.Combobox(
+            self,
+            values=[p.value for p in PIDType],
+            textvariable=self.var_pid_type,
+            state="readonly",
+            width=10
+        )
+        self.combo_pid_type.grid(row=0, column=1, sticky="ew", pady=2)
+
         # --- KP ---
-        ttk.Label(self, text="Kp:").grid(row=0, column=0, sticky="w")
+        ttk.Label(self, text="Kp:").grid(row=1, column=0, sticky="w")
         self.entry_kp = ttk.Entry(self, textvariable=self.var_kp, width=10)
-        self.entry_kp.grid(row=0, column=1, sticky="ew", pady=2)
+        self.entry_kp.grid(row=1, column=1, sticky="ew", pady=2)
 
         # --- KI ---
-        ttk.Label(self, text="Ki:").grid(row=1, column=0, sticky="w")
+        ttk.Label(self, text="Ki:").grid(row=2, column=0, sticky="w")
         self.entry_ki = ttk.Entry(self, textvariable=self.var_ki, width=10)
-        self.entry_ki.grid(row=1, column=1, sticky="ew", pady=2)
+        self.entry_ki.grid(row=2, column=1, sticky="ew", pady=2)
 
         # --- KD ---
-        ttk.Label(self, text="Kd:").grid(row=2, column=0, sticky="w")
+        ttk.Label(self, text="Kd:").grid(row=3, column=0, sticky="w")
         self.entry_kd = ttk.Entry(self, textvariable=self.var_kd, width=10)
-        self.entry_kd.grid(row=2, column=1, sticky="ew", pady=2)
+        self.entry_kd.grid(row=3, column=1, sticky="ew", pady=2)
 
-        # --- Modus ---
-        ttk.Label(self, text="Modus:").grid(row=3, column=0, sticky="w")
+        # --- MODUS ---
+        ttk.Label(self, text="Modus:").grid(row=4, column=0, sticky="w")
         self.combo_mode = ttk.Combobox(
             self,
             values=["PID", "PI", "PD", "P"],
@@ -79,7 +93,7 @@ class PIDWidget(ttk.LabelFrame, BaseWidget):
             state="readonly",
             width=8
         )
-        self.combo_mode.grid(row=3, column=1, sticky="ew", pady=2)
+        self.combo_mode.grid(row=4, column=1, sticky="ew", pady=2)
 
         # --- I- og D-deaktivering ---
         self.chk_disable_i = ttk.Checkbutton(
@@ -87,22 +101,22 @@ class PIDWidget(ttk.LabelFrame, BaseWidget):
             text="Sett I-ledd = ∞ (deaktiver I)",
             variable=self.var_disable_i
         )
-        self.chk_disable_i.grid(row=4, column=0, columnspan=2, sticky="w", pady=(8, 0))
+        self.chk_disable_i.grid(row=5, column=0, columnspan=2, sticky="w", pady=(8, 0))
 
         self.chk_disable_d = ttk.Checkbutton(
             self,
             text="Sett D-ledd = 0 (deaktiver D)",
             variable=self.var_disable_d
         )
-        self.chk_disable_d.grid(row=5, column=0, columnspan=2, sticky="w")
+        self.chk_disable_d.grid(row=6, column=0, columnspan=2, sticky="w")
 
         # --- Apply/Reset ---
         frame_buttons = ttk.Frame(self)
-        frame_buttons.grid(row=6, column=0, columnspan=2, pady=(10, 0))
+        frame_buttons.grid(row=7, column=0, columnspan=2, pady=(10, 0))
 
         ttk.Button(frame_buttons, text="Apply", command=self._apply).grid(row=0, column=0, padx=5)
         ttk.Button(frame_buttons, text="Reset", command=self._reset).grid(row=0, column=1, padx=5)
-
+        
     # ---------------------------------------------------------
     # BINDING
     # ---------------------------------------------------------
@@ -128,34 +142,40 @@ class PIDWidget(ttk.LabelFrame, BaseWidget):
             print("[PIDWidget] Feil: Kp/Ki/Kd må være tall.")
             return
 
-        # 1. Sett Kp, Ki, Kd
+        # 1. Sett PID-form: parallel / ideal / series
+        try:
+            pid_type = PIDType(self.var_pid_type.get())
+        except ValueError:
+            print("[PIDWidget] Feil: Ugyldig PID-form.")
+            return
+
+        if hasattr(self.controller, "set_pid_type"):
+            self.controller.set_pid_type(pid_type)
+
+        # 2. Sett PID-parametre
         if hasattr(self.controller, "set_pid"):
             self.controller.set_pid(kp, ki, kd)
 
-        # 2. Deaktiver I-ledd?
-        if hasattr(self.controller, "disable_integral"):
-            self.controller.disable_integral(self.var_disable_i.get())
-
-        # 3. Deaktiver D-ledd?
-        if hasattr(self.controller, "disable_derivative"):
-            self.controller.disable_derivative(self.var_disable_d.get())
-
-        # 4. Automatisk I/D etter valgt modus
+        # 3. Bestem aktiv/deaktiv I og D basert på modus + checkbox
         mode = self.var_mode.get()
 
-        # --- I-ledd ---
-        if "I" in mode:
-            self.controller.disable_integral(False)
-        else:
-            self.controller.disable_integral(True)
+        disable_i = self.var_disable_i.get() or ("I" not in mode)
+        disable_d = self.var_disable_d.get() or ("D" not in mode)
 
-        # --- D-ledd ---
-        if "D" in mode:
-            self.controller.disable_derivative(False)
-        else:
-            self.controller.disable_derivative(True)
+        # 4. Send I/D-status til controller
+        if hasattr(self.controller, "disable_integral"):
+            self.controller.disable_integral(disable_i)
 
-        print(f"[PIDWidget] Apply OK  →  Kp={kp}, Ki={ki}, Kd={kd}, Mode={mode}")
+        if hasattr(self.controller, "disable_derivative"):
+            self.controller.disable_derivative(disable_d)
+
+        print(
+            f"[PIDWidget] Apply OK → "
+            f"Form={pid_type.value}, "
+            f"Kp={kp}, Ki={ki}, Kd={kd}, "
+            f"Mode={mode}, "
+            f"DisableI={disable_i}, DisableD={disable_d}"
+        )
 
     # ---------------------------------------------------------
     # RESET – hent verdier fra controller
@@ -166,18 +186,19 @@ class PIDWidget(ttk.LabelFrame, BaseWidget):
             print("[PIDWidget] Ingen controller tilgjengelig.")
             return
 
-        # Hent PID-parametre fra controller
+        # --- 1. Hent PID-parametre ---
         if hasattr(self.controller, "get_pid"):
             kp, ki, kd = self.controller.get_pid()
             self.var_kp.set(f"{kp}")
             self.var_ki.set(f"{ki}")
             self.var_kd.set(f"{kd}")
 
-        # Reset "disable I" og "disable D"
-        self.var_disable_i.set(False)
-        self.var_disable_d.set(False)
+        # --- 2. Hent PID-type ---
+        if hasattr(self.controller, "get_pid_type"):
+            pid_type = self.controller.get_pid_type()
+            self.var_pid_type.set(pid_type.value)
 
-        # Sett modus basert på tilgjengelige ledd
+        # --- 3. Sett modus basert på Ki og Kd ---
         mode = "P"
         if ki != 0.0:
             mode += "I"
@@ -186,4 +207,13 @@ class PIDWidget(ttk.LabelFrame, BaseWidget):
 
         self.var_mode.set(mode)
 
-        print("[PIDWidget] Reset OK – hentet verdier fra controller.")
+        # --- 4. Synk checkboxer ---
+        self.var_disable_i.set(ki == 0.0)
+        self.var_disable_d.set(kd == 0.0)
+
+        print(
+            f"[PIDWidget] Reset OK → "
+            f"Form={self.var_pid_type.get()}, "
+            f"Kp={kp}, Ki={ki}, Kd={kd}, "
+            f"Mode={mode}"
+        )

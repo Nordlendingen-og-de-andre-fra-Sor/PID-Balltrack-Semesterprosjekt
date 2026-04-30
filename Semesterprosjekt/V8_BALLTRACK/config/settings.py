@@ -37,12 +37,20 @@ PID_KP = 2.0
 PID_KI = 0.0
 PID_KD = 0.0
 
+PID_K = 1.0
+PID_TI = 1.0
+PID_TD = 0.0
+
 # PID begrensninger
 PID_MIN = -1.0
 PID_MAX = 1.0
 
 # PID sampletid (dt)
 PID_TS = 0.02                  # 20 ms → 50 Hz kontrollsløyfe
+
+# PID – deaktivering av ledd
+PID_TI_DISABLED = 999999.0
+PID_TD_DISABLED = 0.0
 
 
 # ===========================
