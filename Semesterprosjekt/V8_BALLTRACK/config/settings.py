@@ -13,8 +13,8 @@ PCA9685_I2C_BUS = 1            # /dev/i2c-1
 PCA9685_FREQ_HZ = 50           # Servo-frekvens
 
 # Servo pulsgrenser (kan kalibreres senere)
-SERVO_MIN_US = 1000
-SERVO_MAX_US = 2000
+SERVO_MIN_US = 710
+SERVO_MAX_US = 2390
 SERVO_CHANNEL = 0              # PCA9685 utgang vi bruker
 
 
