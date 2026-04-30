@@ -162,12 +162,20 @@ class PositionControllerV8:
         self.pid.reset()
 
     def disable_integral(self, flag: bool):
-        self.pid.cfg.Ki = 0.0 if flag else settings.PID_KI
-        self.pid.reset()
+        if flag:
+            self._stored_Ki = self.pid.cfg.Ki
+            self.pid.cfg.Ki = 0.0
+        else:
+            if hasattr(self, "_stored_Ki"):
+                self.pid.cfg.Ki = self._stored_Ki
 
     def disable_derivative(self, flag: bool):
-        self.pid.cfg.Kd = 0.0 if flag else settings.PID_KD
-        self.pid.reset()
+        if flag:
+            self._stored_Kd = self.pid.cfg.Kd
+            self.pid.cfg.Kd = 0.0
+        else:
+            if hasattr(self, "_stored_Kd"):
+                self.pid.cfg.Kd = self._stored_Kd
 
     # ---------------------------------------------------------
     # Status for GUI
